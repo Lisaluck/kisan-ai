@@ -118,45 +118,6 @@ farmer_crop_ai/
 
 ---
 
-## ☁️ Deploy on Railway (Free)
-
-### Step 1: Push to GitHub
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/YOUR_USERNAME/farmer-crop-ai.git
-git push -u origin main
-```
-
-### Step 2: Deploy on Railway
-1. Go to [railway.app](https://railway.app)
-2. Click **New Project** → **Deploy from GitHub repo**
-3. Select your repository
-4. Click **Add Plugin** → Choose **MySQL**
-5. Go to your Django service → **Variables** tab → Add:
-   ```
-   SECRET_KEY = your-random-secret-key-here
-   DEBUG = False
-   DB_NAME = railway (auto-set by Railway)
-   DB_USER = root (auto-set)
-   DB_PASSWORD = (copy from MySQL plugin)
-   DB_HOST = (copy from MySQL plugin)
-   DB_PORT = 3306
-   ```
-6. Railway auto-deploys → Your site is LIVE!
-
----
-
-## 🎯 TCS Interview Points
-
-- *"Random Forest with 100 estimators predicts crop from 7 soil/climate features"*
-- *"Live AJAX preview — AI runs on every slider change without page reload"*
-- *"Fertilizer advisor compares actual NPK vs crop-specific requirements"*
-- *"Deployed on Railway with MySQL — zero config, production ready"*
-- *"Scikit-learn models are trained at server startup as singletons — loaded once, reused forever"*
-
----
 
 ## 👨‍🌾 Supported Crops (15+)
 
