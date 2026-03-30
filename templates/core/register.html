@@ -1,0 +1,65 @@
+{% extends 'core/base.html' %}
+{% block title %}Register — Kisan AI{% endblock %}
+{% block content %}
+<div style="max-width:560px;margin:2rem auto;">
+  <div class="card">
+    <div class="card-header">
+      <div style="text-align:center;margin-bottom:1rem;font-size:40px;">🌾</div>
+      <h1 class="card-title" style="text-align:center;">Create Account</h1>
+      <p class="card-subtitle" style="text-align:center;">Join Kisan AI and get smart crop recommendations</p>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" name="first_name" class="form-input" placeholder="Ramesh" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" name="last_name" class="form-input" placeholder="Sharma">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-input" placeholder="ramesh123" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-input" placeholder="ramesh@example.com">
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label class="form-label">State</label>
+          <input type="text" name="state" class="form-input" placeholder="Madhya Pradesh">
+        </div>
+        <div class="form-group">
+          <label class="form-label">District</label>
+          <input type="text" name="district" class="form-input" placeholder="Indore">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Land Area (acres)</label>
+        <input type="number" name="land_area" class="form-input" placeholder="2.5" step="0.1" min="0.1" value="1.0">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-input" placeholder="Min 8 characters" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:.5rem;">Create Account 🚀</button>
+    </form>
+
+    <div class="divider"></div>
+    <p style="text-align:center;font-size:14px;color:var(--gray-500);">
+      Already have an account? <a href="{% url 'login' %}" style="color:var(--green-700);font-weight:600;">Login here</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

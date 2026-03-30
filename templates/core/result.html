@@ -1,0 +1,155 @@
+{% extends 'core/base.html' %}
+{% block title %}Advisory Result — Kisan AI{% endblock %}
+{% block content %}
+
+<!-- Hero Result -->
+<div class="result-hero">
+  <div class="crop-icon">
+    {% with advisory.recommended_crop as c %}
+      {% if c == 'rice' %}🌾{% elif c == 'maize' %}🌽{% elif c == 'wheat' %}🌿{% elif c == 'cotton' %}🌸
+      {% elif c == 'banana' %}🍌{% elif c == 'mango' %}🥭{% elif c == 'grapes' %}🍇{% elif c == 'watermelon' %}🍉
+      {% elif c == 'coconut' %}🥥{% elif c == 'papaya' %}🍑{% elif c == 'orange' %}🍊{% elif c == 'pomegranate' %}❤️
+      {% else %}🌱{% endif %}
+    {% endwith %}
+  </div>
+  <h1 style="text-transform:capitalize;">{{ advisory.recommended_crop }}</h1>
+  <p>AI Recommended Crop for your soil &amp; climate conditions</p>
+
+  <!-- Confidence Bar -->
+  <div class="confidence-bar-wrap" style="max-width:400px;margin:1.5rem auto 0;">
+    <div class="confidence-label" style="color:rgba(255,255,255,.8);">AI Confidence: {{ advisory.confidence_score|floatformat:1 }}%</div>
+    <div class="confidence-bar">
+      <div class="confidence-fill" style="width:{{ advisory.confidence_score|floatformat:0 }}%;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Top 3 Crops -->
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-header">
+    <div class="card-title">🏆 Top 3 Crop Suggestions</div>
+    <div class="card-subtitle">Ranked by AI confidence score</div>
+  </div>
+  <div class="top3-grid">
+    {% for item in advisory.top_3_crops %}
+    <div class="top3-card {% if forloop.first %}rank1{% endif %}">
+      {% if forloop.first %}<div style="font-size:20px;margin-bottom:4px;">🥇</div>
+      {% elif forloop.counter == 2 %}<div style="font-size:20px;margin-bottom:4px;">🥈</div>
+      {% else %}<div style="font-size:20px;margin-bottom:4px;">🥉</div>{% endif %}
+      <div class="top3-name">{{ item.crop }}</div>
+      <div class="top3-score">{{ item.score }}% match</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Yield Prediction -->
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-header">
+    <div class="card-title">📊 AI Yield Prediction</div>
+    <div class="card-subtitle">Expected output based on your soil and climate data</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:48px;font-weight:700;color:var(--green-700);">
+        {{ advisory.predicted_yield|floatformat:0 }}
+        <span style="font-size:20px;font-weight:400;color:var(--gray-500);">kg/acre</span>
+      </div>
+      <div style="margin-top:8px;">
+        <span class="badge badge-{{ advisory.yield_category }}">
+          {% if advisory.yield_category == 'high' %}✅ High Yield
+          {% elif advisory.yield_category == 'medium' %}⚡ Medium Yield
+          {% else %}⚠️ Low Yield{% endif %}
+        </span>
+      </div>
+    </div>
+    <div style="flex:1;min-width:200px;">
+      <div style="font-size:14px;color:var(--gray-500);margin-bottom:8px;">Yield category breakdown:</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:12px;height:12px;border-radius:50%;background:#dc2626;"></div>
+          <span style="font-size:13px;color:var(--gray-700);">Low yield — below 1000 kg/acre</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:12px;height:12px;border-radius:50%;background:#d97706;"></div>
+          <span style="font-size:13px;color:var(--gray-700);">Medium yield — 1000–1800 kg/acre</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:12px;height:12px;border-radius:50%;background:#16a34a;"></div>
+          <span style="font-size:13px;color:var(--gray-700);">High yield — above 1800 kg/acre</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fertilizer Suggestion -->
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-header">
+    <div class="card-title">🧪 AI Fertilizer Advisory</div>
+    <div class="card-subtitle">Based on soil NPK levels vs crop requirements</div>
+  </div>
+  <div class="fertilizer-box">{{ advisory.fertilizer_suggestion }}</div>
+</div>
+
+<!-- Soil Data Summary -->
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-header">
+    <div class="card-title">📋 Your Soil Data Summary</div>
+    <div class="card-subtitle">Advisory generated on {{ advisory.created_at|date:"d M Y, h:i A" }}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;">
+    {% for label, val, unit in soil_data %}
+    <div style="text-align:center;padding:1rem;background:var(--green-50);border-radius:var(--radius-sm);border:1px solid var(--green-200);">
+      <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;">{{ label }}</div>
+      <div style="font-size:22px;font-weight:700;color:var(--green-800);margin-top:4px;">{{ val }}</div>
+      <div style="font-size:12px;color:var(--gray-500);">{{ unit }}</div>
+    </div>
+    {% empty %}
+    <div style="text-align:center;padding:1rem;background:var(--green-50);border-radius:var(--radius-sm);border:1px solid var(--green-200);">
+      <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;">Nitrogen</div>
+      <div style="font-size:22px;font-weight:700;color:var(--green-800);margin-top:4px;">{{ advisory.nitrogen }}</div>
+      <div style="font-size:12px;color:var(--gray-500);">kg/ha</div>
+    </div>
+    <div style="text-align:center;padding:1rem;background:var(--green-50);border-radius:var(--radius-sm);border:1px solid var(--green-200);">
+      <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;">Phosphorus</div>
+      <div style="font-size:22px;font-weight:700;color:var(--green-800);margin-top:4px;">{{ advisory.phosphorus }}</div>
+      <div style="font-size:12px;color:var(--gray-500);">kg/ha</div>
+    </div>
+    <div style="text-align:center;padding:1rem;background:var(--green-50);border-radius:var(--radius-sm);border:1px solid var(--green-200);">
+      <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;">Potassium</div>
+      <div style="font-size:22px;font-weight:700;color:var(--green-800);margin-top:4px;">{{ advisory.potassium }}</div>
+      <div style="font-size:12px;color:var(--gray-500);">kg/ha</div>
+    </div>
+    <div style="text-align:center;padding:1rem;background:var(--green-50);border-radius:var(--radius-sm);border:1px solid var(--green-200);">
+      <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;">pH Level</div>
+      <div style="font-size:22px;font-weight:700;color:var(--green-800);margin-top:4px;">{{ advisory.ph_value }}</div>
+      <div style="font-size:12px;color:var(--gray-500);">pH</div>
+    </div>
+    <div style="text-align:center;padding:1rem;background:var(--green-50);border-radius:var(--radius-sm);border:1px solid var(--green-200);">
+      <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;">Rainfall</div>
+      <div style="font-size:22px;font-weight:700;color:var(--green-800);margin-top:4px;">{{ advisory.rainfall }}</div>
+      <div style="font-size:12px;color:var(--gray-500);">mm</div>
+    </div>
+    <div style="text-align:center;padding:1rem;background:var(--green-50);border-radius:var(--radius-sm);border:1px solid var(--green-200);">
+      <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;">Temperature</div>
+      <div style="font-size:22px;font-weight:700;color:var(--green-800);margin-top:4px;">{{ advisory.temperature }}</div>
+      <div style="font-size:12px;color:var(--gray-500);">°C</div>
+    </div>
+    <div style="text-align:center;padding:1rem;background:var(--green-50);border-radius:var(--radius-sm);border:1px solid var(--green-200);">
+      <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;">Humidity</div>
+      <div style="font-size:22px;font-weight:700;color:var(--green-800);margin-top:4px;">{{ advisory.humidity }}</div>
+      <div style="font-size:12px;color:var(--gray-500);">%</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Action Buttons -->
+<div style="display:flex;gap:12px;flex-wrap:wrap;">
+  <a href="{% url 'get_advisory' %}" class="btn btn-primary btn-lg">Get Another Advisory</a>
+  <a href="{% url 'dashboard' %}" class="btn btn-outline">Back to Dashboard</a>
+  <a href="{% url 'history' %}" class="btn btn-outline">View History</a>
+</div>
+
+{% endblock %}

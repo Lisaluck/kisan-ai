@@ -1,0 +1,184 @@
+{% extends 'core/base.html' %}
+{% block title %}Get Advisory — Kisan AI{% endblock %}
+{% block content %}
+
+<div class="section-head">
+  <h2>🌾 Get AI Crop Advisory</h2>
+  <p>Enter your soil and weather data to get instant AI recommendations</p>
+</div>
+
+<!-- Live Preview Box -->
+<div id="live-preview">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <div>
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--green-600);">🤖 AI Live Preview</div>
+      <div class="preview-crop" id="preview-crop">—</div>
+      <div class="preview-sub" id="preview-conf">Fill in the form to see prediction</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:12px;color:var(--gray-500);font-weight:600;text-transform:uppercase;">Predicted Yield</div>
+      <div style="font-size:24px;font-weight:700;color:var(--green-800);" id="preview-yield">—</div>
+      <div id="preview-yield-cat"></div>
+    </div>
+  </div>
+  <div style="margin-top:12px;" id="preview-top3-wrap"></div>
+</div>
+
+<form method="post" id="advisory-form">
+  {% csrf_token %}
+
+  <!-- Soil Nutrients -->
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-header">
+      <div class="card-title">🧪 Soil Nutrients</div>
+      <div class="card-subtitle">Enter NPK values from your soil test report (kg/ha)</div>
+    </div>
+    <div class="form-grid-3">
+      <div class="form-group">
+        <label class="form-label">Nitrogen (N)</label>
+        <div class="range-wrap">
+          <input type="range" min="0" max="140" value="80" id="r_n" oninput="sync('nitrogen',this.value,'v_n');livePreview()">
+          <span class="range-val" id="v_n">80</span>
+        </div>
+        <input type="hidden" name="nitrogen" id="nitrogen" value="80">
+        <div class="form-hint">Recommended: 60–110 kg/ha</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phosphorus (P)</label>
+        <div class="range-wrap">
+          <input type="range" min="0" max="145" value="45" id="r_p" oninput="sync('phosphorus',this.value,'v_p');livePreview()">
+          <span class="range-val" id="v_p">45</span>
+        </div>
+        <input type="hidden" name="phosphorus" id="phosphorus" value="45">
+        <div class="form-hint">Recommended: 20–80 kg/ha</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Potassium (K)</label>
+        <div class="range-wrap">
+          <input type="range" min="0" max="205" value="40" id="r_k" oninput="sync('potassium',this.value,'v_k');livePreview()">
+          <span class="range-val" id="v_k">40</span>
+        </div>
+        <input type="hidden" name="potassium" id="potassium" value="40">
+        <div class="form-hint">Recommended: 20–60 kg/ha</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Soil Properties -->
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-header">
+      <div class="card-title">🌍 Soil & Climate Data</div>
+      <div class="card-subtitle">pH level and weather conditions in your area</div>
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Soil pH</label>
+        <div class="range-wrap">
+          <input type="range" min="3.5" max="9.5" step="0.1" value="6.5" id="r_ph" oninput="sync('ph_value',this.value,'v_ph');livePreview()">
+          <span class="range-val" id="v_ph">6.5</span>
+        </div>
+        <input type="hidden" name="ph_value" id="ph_value" value="6.5">
+        <div class="form-hint">Ideal range: 5.5 – 7.5</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rainfall (mm)</label>
+        <div class="range-wrap">
+          <input type="range" min="20" max="700" value="150" id="r_rain" oninput="sync('rainfall',this.value,'v_rain');livePreview()">
+          <span class="range-val" id="v_rain">150</span>
+        </div>
+        <input type="hidden" name="rainfall" id="rainfall" value="150">
+        <div class="form-hint">Annual average rainfall</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Temperature (°C)</label>
+        <div class="range-wrap">
+          <input type="range" min="8" max="45" value="27" id="r_temp" oninput="sync('temperature',this.value,'v_temp');livePreview()">
+          <span class="range-val" id="v_temp">27</span>
+        </div>
+        <input type="hidden" name="temperature" id="temperature" value="27">
+        <div class="form-hint">Average temperature in °C</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Humidity (%)</label>
+        <div class="range-wrap">
+          <input type="range" min="14" max="100" value="70" id="r_hum" oninput="sync('humidity',this.value,'v_hum');livePreview()">
+          <span class="range-val" id="v_hum">70</span>
+        </div>
+        <input type="hidden" name="humidity" id="humidity" value="70">
+        <div class="form-hint">Average relative humidity</div>
+      </div>
+    </div>
+
+    <div class="form-group" style="max-width:260px;">
+      <label class="form-label">Season</label>
+      <select name="season" class="form-input">
+        <option value="kharif">Kharif (June – November)</option>
+        <option value="rabi">Rabi (November – April)</option>
+        <option value="zaid">Zaid (March – June)</option>
+      </select>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-full btn-lg">
+    🤖 Get AI Advisory
+  </button>
+</form>
+
+<script>
+function sync(fieldId, val, labelId) {
+  document.getElementById(fieldId).value = val;
+  document.getElementById(labelId).textContent = val;
+}
+
+let debounceTimer;
+function livePreview() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(async () => {
+    const body = {
+      nitrogen:    parseFloat(document.getElementById('nitrogen').value),
+      phosphorus:  parseFloat(document.getElementById('phosphorus').value),
+      potassium:   parseFloat(document.getElementById('potassium').value),
+      ph_value:    parseFloat(document.getElementById('ph_value').value),
+      rainfall:    parseFloat(document.getElementById('rainfall').value),
+      temperature: parseFloat(document.getElementById('temperature').value),
+      humidity:    parseFloat(document.getElementById('humidity').value),
+    };
+
+    try {
+      const res = await fetch('/api/predict/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (data.error) return;
+
+      document.getElementById('live-preview').classList.add('visible');
+      document.getElementById('preview-crop').textContent = data.crop.charAt(0).toUpperCase() + data.crop.slice(1);
+      document.getElementById('preview-conf').textContent = `Confidence: ${data.confidence}%`;
+      document.getElementById('preview-yield').textContent = `${data.yield} kg/acre`;
+
+      const catColors = { low: '#dc2626', medium: '#d97706', high: '#16a34a' };
+      const catEl = document.getElementById('preview-yield-cat');
+      catEl.innerHTML = `<span style="font-size:12px;font-weight:600;color:${catColors[data.yield_category] || '#555'};text-transform:uppercase;">${data.yield_category} yield</span>`;
+
+      // Top 3 mini badges
+      const t3 = document.getElementById('preview-top3-wrap');
+      if (data.top3 && data.top3.length) {
+        t3.innerHTML = '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+          data.top3.map((c,i) =>
+            `<span style="background:${i===0?'var(--green-200)':'var(--gray-100)'};color:${i===0?'var(--green-800)':'var(--gray-600)'};padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;text-transform:capitalize;">${c.crop} ${c.score}%</span>`
+          ).join('') + '</div>';
+      }
+    } catch(e) {}
+  }, 400);
+}
+
+// Trigger on load
+livePreview();
+</script>
+
+{% endblock %}

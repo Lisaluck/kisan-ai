@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+{% block title %}Kisan AI — Smart Crop Advisory System{% endblock %}
+{% block content %}
+
+<div class="hero">
+  <div style="font-size:52px;margin-bottom:12px;">🌾</div>
+  <h1>Smart Crop Advisory<br>Powered by AI</h1>
+  <p>Enter your soil data and get instant AI-powered crop recommendations, yield predictions, and fertilizer guidance.</p>
+  <div class="hero-btns">
+    <a href="{% url 'register' %}" class="btn btn-amber btn-lg">Get Started Free</a>
+    <a href="{% url 'login' %}"    class="btn btn-outline btn-lg" style="color:white;border-color:rgba(255,255,255,.4)">Login</a>
+  </div>
+</div>
+
+<div class="features-grid">
+  <div class="feature-card">
+    <div class="feature-icon">🤖</div>
+    <div class="feature-title">AI Crop Recommendation</div>
+    <div class="feature-desc">Random Forest model analyzes your soil N, P, K, pH, temperature, humidity, and rainfall to recommend the best crop.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">📊</div>
+    <div class="feature-title">Yield Prediction</div>
+    <div class="feature-desc">Linear Regression model predicts expected yield in kg/acre before you even plant — helping you plan better.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">🧪</div>
+    <div class="feature-title">Fertilizer Advisory</div>
+    <div class="feature-desc">AI analyzes nutrient gaps in your soil and suggests exact fertilizers — Urea, SSP, MOP — with quantities.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">📜</div>
+    <div class="feature-title">History & Tracking</div>
+    <div class="feature-desc">Every advisory is saved. Track your soil improvements across seasons and see which crops work best for you.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">⚡</div>
+    <div class="feature-title">Instant Results</div>
+    <div class="feature-desc">Live preview updates as you type. No waiting — AI runs locally, no API calls needed.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">🌍</div>
+    <div class="feature-title">15+ Crops Supported</div>
+    <div class="feature-desc">Rice, Wheat, Maize, Cotton, Mango, Banana, Coconut, Grapes, Chickpea, Lentil and many more.</div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:2rem;background:white;border-radius:20px;border:1px solid var(--gray-300);">
+  <h2 style="font-size:22px;font-weight:700;color:var(--green-900);margin-bottom:8px;">Ready to grow smarter? 🚀</h2>
+  <p style="color:var(--gray-500);margin-bottom:1.5rem;">Join thousands of farmers getting AI-powered advisory in seconds.</p>
+  <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Create Free Account</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard — Kisan AI{% endblock %}
+{% block content %}
+
+<div class="section-head">
+  <h2>Welcome back, {{ user.first_name|default:user.username }} 👋</h2>
+  <p>Here's your farming advisory overview</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="stat-grid" style="margin-bottom:2rem;">
+  <div class="stat-card">
+    <div class="stat-label">Total Advisories</div>
+    <div class="stat-value">{{ total }}</div>
+    <div class="stat-sub">all time</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Top Recommended</div>
+    <div class="stat-value" style="font-size:20px;text-transform:capitalize;">{{ top_crop }}</div>
+    <div class="stat-sub">most suggested crop</div>
+  </div>
+  {% if profile %}
+  <div class="stat-card">
+    <div class="stat-label">Land Area</div>
+    <div class="stat-value">{{ profile.land_area }}</div>
+    <div class="stat-sub">acres</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Location</div>
+    <div class="stat-value" style="font-size:16px;">{{ profile.district }}</div>
+    <div class="stat-sub">{{ profile.state }}</div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Quick Action -->
+<div style="background:linear-gradient(135deg, var(--green-800), var(--green-600));border-radius:var(--radius-lg);padding:2rem;color:white;margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+  <div>
+    <h3 style="font-size:18px;font-weight:600;">Get AI Advisory Now</h3>
+    <p style="opacity:.8;font-size:14px;margin-top:4px;">Enter your soil data and get instant crop recommendations</p>
+  </div>
+  <a href="{% url 'get_advisory' %}" class="btn btn-amber btn-lg">Start Advisory →</a>
+</div>
+
+<!-- Recent History -->
+<div class="card">
+  <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+    <div>
+      <div class="card-title">Recent Advisories</div>
+      <div class="card-subtitle">Your last 5 AI recommendations</div>
+    </div>
+    <a href="{% url 'history' %}" class="btn btn-outline" style="font-size:13px;padding:8px 14px;">View All</a>
+  </div>
+
+  {% if advisories %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Recommended Crop</th>
+          <th>Confidence</th>
+          <th>Yield (kg/acre)</th>
+          <th>Season</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in advisories %}
+        <tr>
+          <td>{{ a.created_at|date:"d M Y" }}</td>
+          <td style="font-weight:600;text-transform:capitalize;">{{ a.recommended_crop }}</td>
+          <td>
+            <span class="badge badge-green">{{ a.confidence_score|floatformat:1 }}%</span>
+          </td>
+          <td>{{ a.predicted_yield|default:'-' }}</td>
+          <td><span class="badge badge-amber">{{ a.get_season_display }}</span></td>
+          <td><a href="{% url 'result' a.pk %}" class="btn btn-outline" style="font-size:12px;padding:5px 10px;">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="text-align:center;padding:3rem;color:var(--gray-500);">
+    <div style="font-size:48px;margin-bottom:12px;">🌱</div>
+    <p style="font-size:16px;font-weight:500;margin-bottom:8px;">No advisories yet</p>
+    <p style="font-size:14px;">Click "Start Advisory" to get your first AI crop recommendation!</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
